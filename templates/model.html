@@ -29,7 +29,7 @@
     <div class="two-col">
       <div class="two-col-main">
         <div class="plot-frame">
-          <img src="{{ url_for('static', filename='plots/model_comparison.png', v=2) }}" alt="Cross-validation performance of six regression models" class="plot-img">
+          <div id="chart-model-comparison-page"></div>
           <p class="plot-caption">5-fold cross-validation RMSE for six candidate regressors. Ridge had the lowest initial CV score.</p>
         </div>
       </div>
@@ -126,4 +126,8 @@
     </div>
   </div>
 </section>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/charts.js', v=3) }}"></script>
 {% endblock %}

@@ -12,7 +12,7 @@
     <h1 class="section-title">Model Comparison</h1>
     <p class="section-subtitle">How the candidate regressors performed during model selection.</p>
     <div class="plot-frame plot-frame--large">
-      <img src="{{ url_for('static', filename='plots/model_comparison.png', v=2) }}" alt="Bar chart comparing 5-fold CV RMSE across six regression models" class="plot-img">
+      <div id="chart-model-comparison"></div>
       <p class="plot-caption">5-fold cross-validation RMSE (km). Lower is better. Ridge led the initial CV benchmark; the tuned Gradient Boosting model produced the best final held-out test performance.</p>
       <p class="plot-source">From project training artifacts</p>
     </div>
@@ -28,9 +28,9 @@
     <div class="two-col">
       <div class="two-col-main">
         <div class="plot-frame">
-          <img src="{{ url_for('static', filename='plots/predicted_vs_actual.png', v=2) }}" alt="Scatter plot of actual vs predicted range for 96 test vehicles" class="plot-img">
-          <p class="plot-caption">Actual range on one axis, predicted range on the other. Points close to the reference line indicate strong model tracking.</p>
-          <p class="plot-source">From project evaluation artifacts</p>
+          <div id="chart-actual-vs-predicted"></div>
+          <p class="plot-caption">Actual range on horizontal axis, predicted range on vertical axis. Points close to the reference dashed line indicate strong model tracking.</p>
+        </div>  <p class="plot-source">From project evaluation artifacts</p>
         </div>
       </div>
       <div class="two-col-side two-col-side--text">
@@ -52,9 +52,9 @@
     <div class="two-col">
       <div class="two-col-main">
         <div class="plot-frame">
-          <img src="{{ url_for('static', filename='plots/feature_importance.png', v=2) }}" alt="Top 15 feature importances for the Gradient Boosting model" class="plot-img">
+          <div id="chart-feature-importance"></div>
           <p class="plot-caption">Model feature importance (Gradient Boosting). Battery-per-seat and battery capacity together account for roughly 84% of total importance.</p>
-          <p class="plot-source">From project training artifacts</p>
+        </div>  <p class="plot-source">From project training artifacts</p>
         </div>
       </div>
       <div class="two-col-side two-col-side--text">
@@ -120,4 +120,8 @@
     </table>
   </div>
 </section>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/charts.js', v=3) }}"></script>
 {% endblock %}

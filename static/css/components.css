@@ -39,10 +39,10 @@
 @media (max-width: 900px) { .two-col { grid-template-columns: 1fr; } }
 
 /* Plot frame */
-.plot-frame { background: #ffffff; border: 1px solid var(--border); border-radius: var(--radius-lg); padding: var(--sp-lg); margin-bottom: var(--sp-md); max-width: 100%; overflow: hidden; }
-.section--dark .plot-frame { background: #ffffff; border-color: #444444; }
+.plot-frame { background: var(--bg-panel); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: var(--sp-lg); margin-bottom: var(--sp-md); max-width: 100%; overflow: hidden; }
+.section--dark .plot-frame { background: #222; border-color: var(--border-dark); }
 .plot-frame--large { max-width: 800px; }
-.plot-img { width: 100%; height: auto; max-width: 100%; border-radius: var(--radius); display: block; object-fit: contain; background: #ffffff; }
+.plot-img { width: 100%; height: auto; max-width: 100%; border-radius: var(--radius); display: block; object-fit: contain; }
 .plot-caption { font-size: .78rem; color: var(--text-muted); margin-top: var(--sp-md); line-height: 1.5; }
 .section--dark .plot-caption { color: var(--text-inv-m); }
 .plot-source { font-size: .68rem; color: var(--text-muted); margin-top: var(--sp-xs); font-style: italic; opacity: .7; }
@@ -102,3 +102,45 @@
 /* Loader */
 .loader { width: 24px; height: 24px; border: 3px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: spin .7s linear infinite; }
 @keyframes spin { to { transform: rotate(360deg); } }
+
+/* Interactive Embedded Charts */
+.chart-wrapper { width: 100%; display: flex; flex-direction: column; gap: 12px; }
+.chart-bar-group { padding: 4px 0; }
+.chart-bar-row { display: grid; grid-template-columns: 200px 1fr 90px; align-items: center; gap: 12px; }
+.chart-bar-row--winner .chart-bar-name { color: var(--accent); font-weight: 700; }
+.chart-bar-label { display: flex; flex-direction: column; text-align: right; }
+.chart-bar-name { font-size: 0.78rem; font-weight: 600; }
+.chart-bar-note { font-size: 0.68rem; color: var(--text-muted); opacity: 0.8; }
+.section--dark .chart-bar-note { color: var(--text-inv-m); }
+.chart-bar-track { height: 20px; background: var(--bg-input); border-radius: 4px; overflow: hidden; position: relative; }
+.section--dark .chart-bar-track { background: rgba(255,255,255,0.08); }
+.chart-bar-fill { height: 100%; background: #6f6f6a; border-radius: 4px; transition: width 800ms cubic-bezier(0.25, 0.46, 0.45, 0.94); }
+.chart-bar-fill--accent, .chart-bar-fill--top { background: var(--accent); }
+.chart-bar-fill--other { background: rgba(13,138,114,0.6); }
+.chart-bar-val { font-size: 0.78rem; font-weight: 600; text-align: left; }
+
+.chart-svg { width: 100%; height: auto; display: block; overflow: visible; }
+.chart-axis-label { font-size: 10px; fill: var(--text-muted); }
+.section--dark .chart-axis-label { fill: var(--text-inv-m); }
+.chart-axis-title { font-size: 11px; font-weight: 600; fill: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; }
+.section--dark .chart-axis-title { fill: var(--text-inv-m); }
+.chart-point { fill: var(--accent); stroke: #ffffff; stroke-width: 1.5px; cursor: pointer; transition: r 200ms ease, fill 200ms ease; }
+.chart-point:hover { fill: #0a6e5b; stroke-width: 2.5px; }
+
+.chart-tooltip {
+  position: absolute;
+  z-index: 200;
+  padding: 8px 12px;
+  font-size: 0.74rem;
+  background: var(--bg-dark);
+  color: var(--text-inv);
+  border: 1px solid var(--border-dark);
+  border-radius: 4px;
+  pointer-events: none;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  line-height: 1.4;
+}
+@media (max-width: 600px) {
+  .chart-bar-row { grid-template-columns: 120px 1fr 70px; gap: 8px; }
+  .chart-bar-name { font-size: 0.7rem; }
+}

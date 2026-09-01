@@ -6,21 +6,11 @@ A machine learning solution and interactive web application for predicting Elect
 
 ```text
 Bayesian Blueprints/
+├── app.py                                     # Flask application server
+├── requirements.txt                           # Web app dependencies
 ├── data/
 │   ├── 48c74e3c-91ff-4dda-ba7e-0939da12cf70.xls   # Raw Excel dataset
 │   └── raw.csv                                    # Converted CSV dataset
-├── ev-range-web/                                  # Web Application (Flask + Vanilla JS/CSS)
-│   ├── app.py                                     # Flask application server
-│   ├── requirements.txt                           # Web app dependencies
-│   ├── scripts/
-│   │   └── test_predictions.py                    # Prediction variability audit script
-│   ├── templates/                                 # Multi-page Jinja2 HTML templates
-│   │   ├── base.html
-│   │   ├── home.html
-│   │   ├── predictor.html
-│   │   ├── model.html
-│   │   └── insights.html
-│   └── static/                                    # Static assets (CSS, JS, plots)
 ├── model/
 │   └── ev_range_pipeline.joblib                   # Serialized scikit-learn pipeline
 ├── notebook/
@@ -29,6 +19,15 @@ Bayesian Blueprints/
 │   ├── Model comparison.png                       # Cross-validation performance plot
 │   ├── Predicted vs actual range.png               # Actual vs predicted scatter plot
 │   └── Feature importances.png                    # Feature importance bar chart
+├── scripts/
+│   └── test_predictions.py                    # Prediction variability audit script
+├── templates/                                 # Multi-page Jinja2 HTML templates
+│   ├── base.html
+│   ├── home.html
+│   ├── predictor.html
+│   ├── model.html
+│   └── insights.html
+├── static/                                    # Static assets (CSS, JS, plots)
 ├── MODEL_EXPLANATION.md                           # Detailed model breakdown & technical report
 ├── README.md                                      # Project overview & quickstart
 └── problem.pdf                                    # Project specification problem statement
@@ -54,7 +53,6 @@ For the complete technical breakdown, feature engineering math, data audit findi
 ## Running the Web Application
 
 ```bash
-cd ev-range-web
 pip install -r requirements.txt
 python app.py
 ```

@@ -18,7 +18,7 @@ from flask import Flask, jsonify, render_template, request
 # ---------------------------------------------------------------------------
 app = Flask(__name__)
 
-MODEL_PATH = os.path.join(os.path.dirname(__file__), "..", "model", "ev_range_pipeline.joblib")
+MODEL_PATH = os.path.join(os.path.dirname(__file__), "model", "ev_range_pipeline.joblib")
 pipeline = joblib.load(MODEL_PATH)
 
 # ---------------------------------------------------------------------------

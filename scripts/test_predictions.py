@@ -10,7 +10,7 @@ import numpy as np
 import pandas as pd
 import joblib
 
-MODEL_PATH = os.path.join(os.path.dirname(__file__), "..", "..", "model", "ev_range_pipeline.joblib")
+MODEL_PATH = os.path.join(os.path.dirname(__file__), "..", "model", "ev_range_pipeline.joblib")
 pipeline = joblib.load(MODEL_PATH)
 
 SEGMENT_GROUP_RE = re.compile(r"([A-Za-z]+)\s*-")

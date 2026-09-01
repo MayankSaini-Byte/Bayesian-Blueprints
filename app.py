@@ -21,7 +21,13 @@ app = Flask(__name__)
 MODEL_PATH = os.path.join(os.path.dirname(__file__), "model", "ev_range_pipeline.joblib")
 if not os.path.exists(MODEL_PATH):
     MODEL_PATH = os.path.join(os.path.dirname(__file__), "..", "model", "ev_range_pipeline.joblib")
-pipeline = joblib.load(MODEL_PATH)
+
+pipeline = None
+try:
+    pipeline = joblib.load(MODEL_PATH)
+except Exception as e:
+    print(f"Error loading model from {MODEL_PATH}: {e}")
+    traceback.print_exc()
 
 # ---------------------------------------------------------------------------
 # Feature engineering (mirrors notebook section 5)
@@ -203,6 +209,9 @@ def insights():
 
 @app.route("/api/predict", methods=["POST"])
 def predict():
+    if pipeline is None:
+        return jsonify({"error": "Model pipeline is not loaded."}), 500
+
     try:
         data = request.get_json(force=True)
     except Exception:

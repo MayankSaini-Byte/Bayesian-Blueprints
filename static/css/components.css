@@ -39,10 +39,10 @@
 @media (max-width: 900px) { .two-col { grid-template-columns: 1fr; } }
 
 /* Plot frame */
-.plot-frame { background: var(--bg-panel); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: var(--sp-lg); margin-bottom: var(--sp-md); max-width: 100%; overflow: hidden; }
-.section--dark .plot-frame { background: #222; border-color: var(--border-dark); }
+.plot-frame { background: #ffffff; border: 1px solid var(--border); border-radius: var(--radius-lg); padding: var(--sp-lg); margin-bottom: var(--sp-md); max-width: 100%; overflow: hidden; }
+.section--dark .plot-frame { background: #ffffff; border-color: #444444; }
 .plot-frame--large { max-width: 800px; }
-.plot-img { width: 100%; height: auto; max-width: 100%; border-radius: var(--radius); display: block; object-fit: contain; }
+.plot-img { width: 100%; height: auto; max-width: 100%; border-radius: var(--radius); display: block; object-fit: contain; background: #ffffff; }
 .plot-caption { font-size: .78rem; color: var(--text-muted); margin-top: var(--sp-md); line-height: 1.5; }
 .section--dark .plot-caption { color: var(--text-inv-m); }
 .plot-source { font-size: .68rem; color: var(--text-muted); margin-top: var(--sp-xs); font-style: italic; opacity: .7; }

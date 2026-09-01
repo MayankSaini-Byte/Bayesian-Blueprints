@@ -19,6 +19,8 @@ from flask import Flask, jsonify, render_template, request
 app = Flask(__name__)
 
 MODEL_PATH = os.path.join(os.path.dirname(__file__), "model", "ev_range_pipeline.joblib")
+if not os.path.exists(MODEL_PATH):
+    MODEL_PATH = os.path.join(os.path.dirname(__file__), "..", "model", "ev_range_pipeline.joblib")
 pipeline = joblib.load(MODEL_PATH)
 
 # ---------------------------------------------------------------------------

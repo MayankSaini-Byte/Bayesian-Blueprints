@@ -23,10 +23,16 @@ if not os.path.exists(MODEL_PATH):
     MODEL_PATH = os.path.join(os.path.dirname(__file__), "..", "model", "ev_range_pipeline.joblib")
 
 pipeline = None
+model_load_error = None
+
 try:
-    pipeline = joblib.load(MODEL_PATH)
+    if os.path.exists(MODEL_PATH):
+        pipeline = joblib.load(MODEL_PATH)
+    else:
+        model_load_error = f"File not found: {MODEL_PATH} (cwd: {os.getcwd()}, dir: {os.path.dirname(__file__)})"
 except Exception as e:
-    print(f"Error loading model from {MODEL_PATH}: {e}")
+    model_load_error = f"Exception loading model from {MODEL_PATH}: {type(e).__name__}: {str(e)}"
+    print(model_load_error)
     traceback.print_exc()
 
 # ---------------------------------------------------------------------------
@@ -210,7 +216,8 @@ def insights():
 @app.route("/api/predict", methods=["POST"])
 def predict():
     if pipeline is None:
-        return jsonify({"error": "Model pipeline is not loaded."}), 500
+        err_detail = model_load_error or "Unknown model loading failure."
+        return jsonify({"error": f"Model pipeline is not loaded. Details: {err_detail}"}), 500
 
     try:
         data = request.get_json(force=True)

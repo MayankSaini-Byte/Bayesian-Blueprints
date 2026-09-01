@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+{% set active_page = "home" %}
+
+{% block title %}EV Range Prediction — Home{% endblock %}
+
+{% block content %}
+<!-- Hero -->
+<section class="hero">
+  <div class="hero-inner">
+    <div class="hero-text">
+      <p class="hero-label">Engineering Specification Predictor</p>
+      <h1 class="hero-title">EV Range<br>Prediction</h1>
+      <p class="hero-desc">Estimate an electric vehicle's rated range from its engineering specifications. A reproducible regression pipeline trained on 478 EV models.</p>
+      <a href="/predictor" class="btn btn--primary">Try the Predictor</a>
+    </div>
+    <div class="hero-stats">
+      <div class="hero-stat">
+        <span class="hero-stat-value mono">393.18</span>
+        <span class="hero-stat-unit">km</span>
+        <span class="hero-stat-label">Dataset Mean</span>
+      </div>
+      <div class="hero-stat">
+        <span class="hero-stat-value mono">135 &mdash; 685</span>
+        <span class="hero-stat-unit">km</span>
+        <span class="hero-stat-label">Target Range</span>
+      </div>
+      <div class="hero-stat">
+        <span class="hero-stat-value mono">478</span>
+        <span class="hero-stat-unit">vehicles</span>
+        <span class="hero-stat-label">Dataset Size</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Quick Stats -->
+<section class="section">
+  <div class="section-inner">
+    <div class="stat-row">
+      <div class="stat-item">
+        <span class="stat-value mono">478</span>
+        <span class="stat-label">EV Models</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-value mono">22</span>
+        <span class="stat-label">Initial Features</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-value mono">80 / 20</span>
+        <span class="stat-label">Train / Test</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-value mono">42</span>
+        <span class="stat-label">Random Seed</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Why This Project -->
+<section class="section section--dark">
+  <div class="section-inner">
+    <div class="features-grid">
+      <div class="feature-card">
+        <h3 class="feature-title">Leakage Control</h3>
+        <p>Efficiency is deliberately excluded because it is algebraically linked to range. Including it would let the model trivially reconstruct the target instead of learning from genuine specifications.</p>
+      </div>
+      <div class="feature-card">
+        <h3 class="feature-title">Domain Features</h3>
+        <p>Battery-per-seat, vehicle footprint, approximate volume, and torque-per-battery ratios add engineering context that raw columns alone cannot express.</p>
+      </div>
+      <div class="feature-card">
+        <h3 class="feature-title">Reproducibility</h3>
+        <p>The entire preprocessing and model are serialized into a single Joblib pipeline artifact. Fixed random seed, documented split, and leakage-free imputation ensure reproducible results.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="section cta-section">
+  <div class="section-inner cta-inner">
+    <h2 class="cta-title">Have a vehicle specification sheet?</h2>
+    <a href="/predictor" class="btn btn--primary btn--lg">Estimate its range &rarr;</a>
+  </div>
+</section>
+{% endblock %}

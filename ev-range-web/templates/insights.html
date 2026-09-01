@@ -1,0 +1,123 @@
+{% extends "base.html" %}
+{% set active_page = "insights" %}
+
+{% block title %}Insights — EV Range{% endblock %}
+{% block meta_description %}Visual analysis of the EV range prediction model: feature importance, actual vs predicted, and model comparison.{% endblock %}
+
+{% block content %}
+<!-- 01 Model Comparison -->
+<section class="section">
+  <div class="section-inner">
+    <p class="section-number">01</p>
+    <h1 class="section-title">Model Comparison</h1>
+    <p class="section-subtitle">How the candidate regressors performed during model selection.</p>
+    <div class="plot-frame plot-frame--large">
+      <img src="{{ url_for('static', filename='plots/Model comparison.png') }}" alt="Bar chart comparing 5-fold CV RMSE across six regression models" class="plot-img">
+      <p class="plot-caption">5-fold cross-validation RMSE (km). Lower is better. Ridge led the initial CV benchmark; the tuned Gradient Boosting model produced the best final held-out test performance.</p>
+      <p class="plot-source">From project training artifacts</p>
+    </div>
+  </div>
+</section>
+
+<!-- 02 Actual vs Predicted -->
+<section class="section section--dark">
+  <div class="section-inner">
+    <p class="section-number">02</p>
+    <h2 class="section-title">Do Predictions Track the Data?</h2>
+    <p class="section-subtitle">How closely the final model tracks held-out vehicle range.</p>
+    <div class="two-col">
+      <div class="two-col-main">
+        <div class="plot-frame">
+          <img src="{{ url_for('static', filename='plots/Predicted vs actual range.png') }}" alt="Scatter plot of actual vs predicted range for 96 test vehicles" class="plot-img">
+          <p class="plot-caption">Actual range on one axis, predicted range on the other. Points close to the reference line indicate strong model tracking.</p>
+          <p class="plot-source">From project evaluation artifacts</p>
+        </div>
+      </div>
+      <div class="two-col-side two-col-side--text">
+        <h3 class="subsection-title">Interpretation</h3>
+        <p>The closer points stay to the diagonal reference line, the more closely the model follows the held-out observations. The tuned Gradient Boosting model achieves an R&sup2; of 0.9813 on these 96 unseen vehicles, with an average error of 10.82 km.</p>
+        <p>Scatter is relatively uniform across the 135&ndash;685 km range, suggesting the model generalizes well to both compact and large-battery EVs.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 03 Feature Importance -->
+<section class="section">
+  <div class="section-inner">
+    <p class="section-number">03</p>
+    <h2 class="section-title">What Drives Range?</h2>
+    <p class="section-subtitle">Which engineered and raw features contribute most strongly to the Gradient Boosting model.</p>
+
+    <div class="two-col">
+      <div class="two-col-main">
+        <div class="plot-frame">
+          <img src="{{ url_for('static', filename='plots/Feature importances.png') }}" alt="Top 15 feature importances for the Gradient Boosting model" class="plot-img">
+          <p class="plot-caption">Model feature importance (Gradient Boosting). Battery-per-seat and battery capacity together account for roughly 84% of total importance.</p>
+          <p class="plot-source">From project training artifacts</p>
+        </div>
+      </div>
+      <div class="two-col-side two-col-side--text">
+        <h3 class="subsection-title">Key Features</h3>
+        <div class="imp-list">
+          <div class="imp-list-item"><span class="imp-list-name mono">battery_per_seat</span><span class="imp-list-pct mono">49.99%</span></div>
+          <div class="imp-list-item"><span class="imp-list-name mono">battery_capacity_kWh</span><span class="imp-list-pct mono">34.03%</span></div>
+          <div class="imp-list-item"><span class="imp-list-name mono">height_mm</span><span class="imp-list-pct mono">5.12%</span></div>
+          <div class="imp-list-item"><span class="imp-list-name mono">fast_charging_power</span><span class="imp-list-pct mono">3.48%</span></div>
+          <div class="imp-list-item"><span class="imp-list-name mono">torque_per_100kwh</span><span class="imp-list-pct mono">1.28%</span></div>
+          <div class="imp-list-item"><span class="imp-list-name mono">car_body_type_SUV</span><span class="imp-list-pct mono">0.96%</span></div>
+          <div class="imp-list-item"><span class="imp-list-name mono">car_body_type_Sedan</span><span class="imp-list-pct mono">0.78%</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Engineering Interpretation -->
+<section class="section section--dark">
+  <div class="section-inner">
+    <p class="section-number">04</p>
+    <h2 class="section-title">Engineering Interpretation</h2>
+    <div class="features-grid">
+      <div class="feature-card">
+        <h3 class="feature-title">Battery</h3>
+        <p>Higher battery capacity provides strong predictive signal for increased range, consistent with the fundamental physics of stored energy available for propulsion.</p>
+      </div>
+      <div class="feature-card">
+        <h3 class="feature-title">Vehicle Dimensions</h3>
+        <p>Height contributes some predictive signal, plausibly reflecting the vehicle's physical and aerodynamic characteristics. Larger frontal area may correlate with specific vehicle categories.</p>
+      </div>
+      <div class="feature-card">
+        <h3 class="feature-title">Performance</h3>
+        <p>Torque and fast-charging characteristics contribute additional signal to the model's predictions, likely capturing drivetrain efficiency and battery thermal management capacity.</p>
+      </div>
+    </div>
+    <p class="interpretation-caveat">Feature importance indicates model importance, not physical causation. These features contribute to prediction accuracy within this trained model.</p>
+  </div>
+</section>
+
+<!-- Data audit -->
+<section class="section">
+  <div class="section-inner">
+    <p class="section-number">05</p>
+    <h2 class="section-title">Data Quality</h2>
+    <p class="section-subtitle">478 EV specification rows, 22 initial attributes.</p>
+    <div class="stat-row stat-row--compact">
+      <div class="stat-item"><span class="stat-value mono">478</span><span class="stat-label">Total vehicles</span></div>
+      <div class="stat-item"><span class="stat-value mono">22</span><span class="stat-label">Initial attributes</span></div>
+      <div class="stat-item"><span class="stat-value mono">0</span><span class="stat-label">Duplicate rows</span></div>
+      <div class="stat-item"><span class="stat-value mono">42.3%</span><span class="stat-label">number_of_cells missing</span></div>
+    </div>
+    <table class="data-table data-table--compact">
+      <thead><tr><th>Feature</th><th>Missing</th><th>%</th><th>Handling</th></tr></thead>
+      <tbody>
+        <tr><td class="mono">number_of_cells</td><td class="mono">202</td><td class="mono">42.3</td><td>Kept + missingness flag + median imputation</td></tr>
+        <tr><td class="mono">towing_capacity_kg</td><td class="mono">26</td><td class="mono">5.4</td><td>Median imputation in pipeline</td></tr>
+        <tr><td class="mono">torque_nm</td><td class="mono">7</td><td class="mono">1.5</td><td>Median imputation in pipeline</td></tr>
+        <tr><td class="mono">fast_charging_power_kw_dc</td><td class="mono">1</td><td class="mono">0.2</td><td>Median imputation in pipeline</td></tr>
+        <tr><td class="mono">cargo_volume_l</td><td class="mono">1</td><td class="mono">0.2</td><td>Cleaned string formats</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+{% endblock %}

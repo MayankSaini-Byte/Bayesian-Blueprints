@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="{% block meta_description %}Predict electric vehicle driving range from engineering specifications using a Gradient Boosting regression pipeline trained on 478 EV models.{% endblock %}">
+  <title>{% block title %}EV Range Prediction{% endblock %}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/components.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/pages.css') }}">
+  {% block head_extra %}{% endblock %}
+</head>
+<body>
+  <header class="site-header">
+    <div class="header-inner">
+      <a href="/" class="header-brand">
+        <span class="brand-primary">EV RANGE</span>
+        <span class="brand-sep">/</span>
+        <span class="brand-secondary">ML</span>
+      </a>
+      <nav class="header-nav" id="header-nav" aria-label="Main navigation">
+        <a href="/" class="nav-link {% if active_page == 'home' %}nav-link--active{% endif %}">Home</a>
+        <a href="/predictor" class="nav-link {% if active_page == 'predictor' %}nav-link--active{% endif %}">Predictor</a>
+        <a href="/model" class="nav-link {% if active_page == 'model' %}nav-link--active{% endif %}">Model</a>
+        <a href="/insights" class="nav-link {% if active_page == 'insights' %}nav-link--active{% endif %}">Insights</a>
+      </nav>
+      <button class="nav-toggle" id="nav-toggle" aria-label="Toggle navigation" aria-expanded="false">
+        <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><rect y="4" width="22" height="2" fill="currentColor"/><rect y="10" width="22" height="2" fill="currentColor"/><rect y="16" width="22" height="2" fill="currentColor"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <main>{% block content %}{% endblock %}</main>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <span class="brand-primary">EV RANGE</span>
+        <span class="brand-sep">/</span>
+        <span class="brand-secondary">MACHINE LEARNING</span>
+      </div>
+      <p class="footer-model">Gradient Boosting Regressor &middot; Scikit-Learn &middot; Flask &middot; Joblib</p>
+      <p class="footer-note">Engineering-focused ML project</p>
+    </div>
+  </footer>
+
+  <script>
+    document.getElementById('nav-toggle').addEventListener('click', function() {
+      var nav = document.getElementById('header-nav');
+      var open = nav.classList.toggle('open');
+      this.setAttribute('aria-expanded', open);
+    });
+    document.querySelectorAll('#header-nav .nav-link').forEach(function(l) {
+      l.addEventListener('click', function() {
+        document.getElementById('header-nav').classList.remove('open');
+        document.getElementById('nav-toggle').setAttribute('aria-expanded', 'false');
+      });
+    });
+  </script>
+  {% block scripts %}{% endblock %}
+</body>
+</html>

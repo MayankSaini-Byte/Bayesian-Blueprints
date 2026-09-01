@@ -1,0 +1,197 @@
+{% extends "base.html" %}
+{% set active_page = "predictor" %}
+
+{% block title %}Predictor — EV Range{% endblock %}
+{% block meta_description %}Enter EV specifications to estimate driving range using a Gradient Boosting regression model.{% endblock %}
+
+{% block content %}
+<section class="section predictor-page">
+  <div class="section-inner">
+    <p class="section-number">01</p>
+    <h1 class="section-title">Predictor</h1>
+    <p class="section-subtitle">Enter vehicle specifications to estimate rated range.</p>
+
+    <div class="predictor-workspace">
+
+      <!-- Form Column -->
+      <form id="predict-form" class="predict-form" novalidate>
+
+        <fieldset class="field-group">
+          <legend class="field-group-legend">01 / Battery</legend>
+          <div class="field-grid">
+            <div class="field">
+              <label for="battery_capacity_kWh">Battery Capacity <span class="unit">kWh</span></label>
+              <input type="number" id="battery_capacity_kWh" name="battery_capacity_kWh" step="0.1" min="0.1" placeholder="e.g. 77.4">
+            </div>
+            <div class="field">
+              <label for="number_of_cells">Number of Cells</label>
+              <input type="number" id="number_of_cells" name="number_of_cells" step="1" min="1" placeholder="e.g. 384">
+            </div>
+            <div class="field">
+              <label for="seats">Seats</label>
+              <input type="number" id="seats" name="seats" step="1" min="1" max="9" placeholder="e.g. 5">
+            </div>
+          </div>
+          <div class="field field--checkbox">
+            <input type="checkbox" id="cells_missing_flag" name="cells_missing_flag">
+            <label for="cells_missing_flag">Battery cell count unavailable</label>
+          </div>
+        </fieldset>
+
+        <fieldset class="field-group">
+          <legend class="field-group-legend">02 / Performance</legend>
+          <div class="field-grid">
+            <div class="field">
+              <label for="top_speed_kmh">Top Speed <span class="unit">km/h</span></label>
+              <input type="number" id="top_speed_kmh" name="top_speed_kmh" step="1" min="1" placeholder="e.g. 180">
+            </div>
+            <div class="field">
+              <label for="acceleration_0_100_s">0&ndash;100 km/h <span class="unit">s</span></label>
+              <input type="number" id="acceleration_0_100_s" name="acceleration_0_100_s" step="0.1" min="0.1" placeholder="e.g. 7.3">
+            </div>
+            <div class="field">
+              <label for="torque_nm">Torque <span class="unit">Nm</span></label>
+              <input type="number" id="torque_nm" name="torque_nm" step="1" min="0" placeholder="e.g. 350">
+            </div>
+            <div class="field">
+              <label for="fast_charging_power_kw_dc">Fast Charging <span class="unit">kW DC</span></label>
+              <input type="number" id="fast_charging_power_kw_dc" name="fast_charging_power_kw_dc" step="1" min="0" placeholder="e.g. 233">
+            </div>
+            <div class="field">
+              <label for="towing_capacity_kg">Towing Capacity <span class="unit">kg</span></label>
+              <input type="number" id="towing_capacity_kg" name="towing_capacity_kg" step="1" min="0" placeholder="e.g. 1600">
+            </div>
+          </div>
+        </fieldset>
+
+        <fieldset class="field-group">
+          <legend class="field-group-legend">03 / Dimensions</legend>
+          <div class="field-grid">
+            <div class="field">
+              <label for="length_mm">Length <span class="unit">mm</span></label>
+              <input type="number" id="length_mm" name="length_mm" step="1" min="1" placeholder="e.g. 4635">
+            </div>
+            <div class="field">
+              <label for="width_mm">Width <span class="unit">mm</span></label>
+              <input type="number" id="width_mm" name="width_mm" step="1" min="1" placeholder="e.g. 1890">
+            </div>
+            <div class="field">
+              <label for="height_mm">Height <span class="unit">mm</span></label>
+              <input type="number" id="height_mm" name="height_mm" step="1" min="1" placeholder="e.g. 1605">
+            </div>
+            <div class="field">
+              <label for="cargo_volume_l">Cargo Volume <span class="unit">L</span></label>
+              <input type="number" id="cargo_volume_l" name="cargo_volume_l" step="1" min="0" placeholder="e.g. 520">
+            </div>
+          </div>
+        </fieldset>
+
+        <fieldset class="field-group">
+          <legend class="field-group-legend">04 / Configuration</legend>
+          <div class="field-grid">
+            <div class="field">
+              <label for="drivetrain">Drivetrain</label>
+              <select id="drivetrain" name="drivetrain"><option value="FWD">FWD</option><option value="RWD">RWD</option><option value="AWD">AWD</option></select>
+            </div>
+            <div class="field">
+              <label for="segment">Segment</label>
+              <select id="segment" name="segment">
+                <option value="A - Mini">A &mdash; Mini</option>
+                <option value="B - Compact">B &mdash; Compact</option>
+                <option value="C - Medium">C &mdash; Medium</option>
+                <option value="D - Large">D &mdash; Large</option>
+                <option value="E - Executive">E &mdash; Executive</option>
+                <option value="F - Luxury">F &mdash; Luxury</option>
+                <option value="JA - Mini">JA &mdash; Mini</option>
+                <option value="JB - Compact">JB &mdash; Compact</option>
+                <option value="JC - Medium" selected>JC &mdash; Medium</option>
+                <option value="JD - Large">JD &mdash; Large</option>
+                <option value="JE - Executive">JE &mdash; Executive</option>
+                <option value="JF - Luxury">JF &mdash; Luxury</option>
+                <option value="M - Multi-Purpose">M &mdash; Multi-Purpose</option>
+                <option value="S - Sports">S &mdash; Sports</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="car_body_type">Body Type</label>
+              <select id="car_body_type" name="car_body_type">
+                <option value="Hatchback">Hatchback</option>
+                <option value="Sedan">Sedan</option>
+                <option value="SUV">SUV</option>
+                <option value="Station Wagon">Station Wagon</option>
+                <option value="Coupe">Coupe</option>
+                <option value="Convertible">Convertible</option>
+                <option value="MPV">MPV</option>
+                <option value="Pick-up">Pick-up</option>
+              </select>
+            </div>
+          </div>
+        </fieldset>
+
+        <div class="form-actions">
+          <button type="button" class="btn btn--outline" id="btn-load-example">Load Example</button>
+          <button type="submit" class="btn btn--primary" id="btn-predict">Estimate Range</button>
+        </div>
+      </form>
+
+      <!-- Result Panel -->
+      <div class="result-panel" id="result-panel" aria-live="polite">
+        <div class="result-state" id="result-initial">
+          <p class="result-placeholder">Enter specifications to estimate range.</p>
+        </div>
+        <div class="result-state hidden" id="result-loading">
+          <div class="loader"></div>
+          <p>Running model&hellip;</p>
+        </div>
+        <div class="result-state hidden" id="result-success">
+          <p class="result-label">Estimated Range</p>
+          <p class="result-value"><span class="result-number mono" id="result-number">&mdash;</span> <span class="result-km">km</span></p>
+          <p class="result-basis">Model estimate based on vehicle specifications</p>
+          <div class="result-range-bar">
+            <div class="range-bar-track"><div class="range-bar-fill" id="range-bar-fill"></div><div class="range-bar-marker" id="range-bar-marker"></div></div>
+            <div class="range-bar-labels"><span class="mono">135</span><span class="mono">685</span></div>
+          </div>
+          <div class="result-meta">
+            <div class="result-meta-item"><span class="result-meta-label">Model</span><span class="result-meta-value">Gradient Boosting Regressor</span></div>
+            <div class="result-meta-item"><span class="result-meta-label">Test MAE</span><span class="result-meta-value mono">10.82 km</span></div>
+            <div class="result-meta-item"><span class="result-meta-label">Test RMSE</span><span class="result-meta-value mono">14.08 km</span></div>
+            <div class="result-meta-item"><span class="result-meta-label">R&sup2;</span><span class="result-meta-value mono">0.9813</span></div>
+          </div>
+          <div class="result-meta-item"><span class="result-meta-label">Evaluation reference</span><span class="result-meta-value">96 held-out vehicles</span></div>
+
+          <!-- Input summary -->
+          <div class="input-summary hidden" id="input-summary">
+            <p class="input-summary-title">Received Input</p>
+            <div class="input-summary-grid" id="input-summary-grid"></div>
+          </div>
+
+          <!-- Why this result -->
+          <details class="result-details">
+            <summary>Why this result?</summary>
+            <p>The model combines raw EV specifications with engineered features: battery per seat, vehicle footprint, approximate volume, torque per 100 kWh, and segment group. These derived features capture domain physics beyond raw columns.</p>
+          </details>
+        </div>
+        <div class="result-state hidden" id="result-error">
+          <p class="result-error-msg" id="result-error-msg"></p>
+        </div>
+
+        <!-- Leakage note -->
+        <div class="leakage-note">
+          <strong>Efficiency excluded</strong> &mdash; Efficiency (Wh/km) is not accepted as input because it is algebraically linked to range and could introduce target leakage.
+        </div>
+
+        <!-- History -->
+        <div class="history-panel hidden" id="history-panel">
+          <p class="history-title">Recent Predictions</p>
+          <div class="history-list" id="history-list"></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/predictor.js') }}"></script>
+{% endblock %}

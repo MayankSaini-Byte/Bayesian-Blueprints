@@ -1,0 +1,129 @@
+{% extends "base.html" %}
+{% set active_page = "model" %}
+
+{% block title %}Model — EV Range{% endblock %}
+{% block meta_description %}Technical details of the Gradient Boosting Regressor used for EV range prediction.{% endblock %}
+
+{% block content %}
+<!-- Performance Hero -->
+<section class="section section--dark model-hero">
+  <div class="section-inner">
+    <p class="section-number">02</p>
+    <h1 class="section-title">Model Performance</h1>
+    <p class="model-subtitle">Gradient Boosting Regressor</p>
+    <p class="section-subtitle">Evaluated on 96 held-out vehicles.</p>
+    <div class="metrics-row">
+      <div class="metric-card metric-card--accent"><span class="metric-value mono">98.13%</span><span class="metric-label">R&sup2;</span></div>
+      <div class="metric-card"><span class="metric-value mono">10.82 <small>km</small></span><span class="metric-label">MAE</span></div>
+      <div class="metric-card"><span class="metric-value mono">14.08 <small>km</small></span><span class="metric-label">RMSE</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- Model Selection -->
+<section class="section">
+  <div class="section-inner">
+    <p class="section-number">03</p>
+    <h2 class="section-title">Model Selection</h2>
+
+    <div class="two-col">
+      <div class="two-col-main">
+        <div class="plot-frame">
+          <img src="{{ url_for('static', filename='plots/Model comparison.png') }}" alt="Cross-validation performance of six regression models" class="plot-img">
+          <p class="plot-caption">5-fold cross-validation RMSE for six candidate regressors. Ridge had the lowest initial CV score.</p>
+        </div>
+      </div>
+      <div class="two-col-side">
+        <p class="comparison-note">Six regression families were benchmarked using 5-fold cross-validation on the training set. Ridge had the strongest initial CV RMSE. Gradient Boosting became the final held-out test winner after hyperparameter tuning.</p>
+        <table class="data-table">
+          <thead><tr><th>Model</th><th>CV RMSE</th></tr></thead>
+          <tbody>
+            <tr class="row--highlight"><td>Ridge Regression</td><td class="mono">19.57 km</td></tr>
+            <tr><td>Gradient Boosting</td><td class="mono">22.53 km</td></tr>
+            <tr><td>Lasso Regression</td><td class="mono">24.85 km</td></tr>
+            <tr><td>XGBoost Regressor</td><td class="mono">24.88 km</td></tr>
+            <tr><td>Random Forest</td><td class="mono">24.94 km</td></tr>
+            <tr><td>Linear Regression</td><td class="mono">33.07 km</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Final test comparison -->
+    <h3 class="subsection-title">Final Held-Out Test Comparison</h3>
+    <table class="data-table data-table--wide">
+      <thead><tr><th>Metric</th><th>Ridge (Tuned)</th><th class="col--accent">Gradient Boosting (Tuned)</th></tr></thead>
+      <tbody>
+        <tr><td>MAE</td><td class="mono">13.96 km</td><td class="mono col--accent">10.82 km</td></tr>
+        <tr><td>RMSE</td><td class="mono">17.61 km</td><td class="mono col--accent">14.08 km</td></tr>
+        <tr><td>R&sup2;</td><td class="mono">0.9707</td><td class="mono col--accent">0.9813</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- Pipeline -->
+<section class="section section--dark">
+  <div class="section-inner">
+    <p class="section-number">04</p>
+    <h2 class="section-title">Pipeline Architecture</h2>
+    <p class="section-subtitle">Raw specifications are cleaned, transformed, and passed through one reproducible preprocessing + modeling pipeline.</p>
+
+    <div class="pipeline-flow">
+      <div class="pipeline-step"><span class="pipeline-step-num mono">1</span><span class="pipeline-step-title">Raw Specifications</span><span class="pipeline-step-desc">Battery, dimensions, performance, configuration</span></div>
+      <div class="pipeline-arrow" aria-hidden="true"></div>
+      <div class="pipeline-step"><span class="pipeline-step-num mono">2</span><span class="pipeline-step-title">Feature Engineering</span><span class="pipeline-step-desc">footprint_m2, volume_m3, battery_per_seat, torque_per_100kwh, segment_group</span></div>
+      <div class="pipeline-arrow" aria-hidden="true"></div>
+      <div class="pipeline-step"><span class="pipeline-step-num mono">3</span><span class="pipeline-step-title">Column Transformer</span><span class="pipeline-step-desc"><strong>Numeric:</strong> median impute &rarr; scale<br><strong>Categorical:</strong> most-frequent &rarr; one-hot</span></div>
+      <div class="pipeline-arrow" aria-hidden="true"></div>
+      <div class="pipeline-step pipeline-step--accent"><span class="pipeline-step-num mono">4</span><span class="pipeline-step-title">Gradient Boosting</span><span class="pipeline-step-desc">lr=0.1 &middot; depth=3 &middot; 300 trees</span></div>
+      <div class="pipeline-arrow" aria-hidden="true"></div>
+      <div class="pipeline-step"><span class="pipeline-step-num mono">5</span><span class="pipeline-step-title">Predicted Range</span><span class="pipeline-step-desc">Estimated km</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- Feature Engineering -->
+<section class="section">
+  <div class="section-inner">
+    <p class="section-number">05</p>
+    <h2 class="section-title">Feature Engineering</h2>
+    <p class="section-subtitle">Five domain-specific features derived from raw specifications.</p>
+    <div class="eng-grid">
+      <div class="eng-card"><h3 class="eng-card-title mono">footprint_m2</h3><p class="eng-formula mono">(length_mm / 1000) &times; (width_mm / 1000)</p><p class="eng-desc">Vehicle ground footprint area &mdash; proxy for aerodynamic drag area.</p></div>
+      <div class="eng-card"><h3 class="eng-card-title mono">volume_m3</h3><p class="eng-formula mono">footprint_m2 &times; (height_mm / 1000)</p><p class="eng-desc">Approximate vehicle spatial envelope.</p></div>
+      <div class="eng-card"><h3 class="eng-card-title mono">battery_per_seat</h3><p class="eng-formula mono">battery_capacity_kWh / seats</p><p class="eng-desc">Energy capacity allocated per passenger.</p></div>
+      <div class="eng-card"><h3 class="eng-card-title mono">torque_per_100kwh</h3><p class="eng-formula mono">(torque_nm / battery_kWh) &times; 100</p><p class="eng-desc">Drivetrain performance versus efficiency tuning ratio.</p></div>
+      <div class="eng-card"><h3 class="eng-card-title mono">segment_group</h3><p class="eng-formula mono">prefix of segment</p><p class="eng-desc">Broad market classification reducing cardinality.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- Reproducibility + Limitations -->
+<section class="section section--dark">
+  <div class="section-inner">
+    <div class="two-col">
+      <div class="two-col-main">
+        <p class="section-number">06</p>
+        <h2 class="section-title">Reproducibility</h2>
+        <div class="repro-grid">
+          <div class="repro-item"><span class="repro-label">Dataset</span><span class="repro-value mono">478 EV models</span></div>
+          <div class="repro-item"><span class="repro-label">Train / Test</span><span class="repro-value mono">382 / 96</span></div>
+          <div class="repro-item"><span class="repro-label">Split</span><span class="repro-value mono">80 / 20</span></div>
+          <div class="repro-item"><span class="repro-label">Random Seed</span><span class="repro-value mono">42</span></div>
+          <div class="repro-item"><span class="repro-label">Model Artifact</span><span class="repro-value mono">ev_range_pipeline.joblib</span></div>
+        </div>
+      </div>
+      <div class="two-col-side">
+        <p class="section-number">07</p>
+        <h2 class="section-title">Engineering Notes</h2>
+        <div class="limitation-list">
+          <div class="limitation-item"><strong>Rated vs real-world range</strong> &mdash; The target represents official rated range. Real conditions (temperature, HVAC, terrain, driving) cause variation.</div>
+          <div class="limitation-item"><strong>Missing cell metadata</strong> &mdash; <span class="mono">number_of_cells</span> is missing in 42.3% of vehicles; handled via imputation + missingness flag.</div>
+          <div class="limitation-item"><strong>Cargo normalization</strong> &mdash; Three cargo entries recorded as banana boxes were converted using <span class="mono">1 box = 52 L</span>.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

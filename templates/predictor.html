@@ -2,7 +2,7 @@
 {% set active_page = "predictor" %}
 
 {% block title %}Predictor — EV Range{% endblock %}
-{% block meta_description %}Enter EV specifications to estimate driving range using a Gradient Boosting regression model.{% endblock %}
+{% block meta_description %}Enter EV specifications to estimate driving range using a Ridge Regression model.{% endblock %}
 
 {% block content %}
 <section class="section predictor-page">
@@ -152,12 +152,12 @@
             <div class="range-bar-labels"><span class="mono">135</span><span class="mono">685</span></div>
           </div>
           <div class="result-meta">
-            <div class="result-meta-item"><span class="result-meta-label">Model</span><span class="result-meta-value">Gradient Boosting Regressor</span></div>
-            <div class="result-meta-item"><span class="result-meta-label">Test MAE</span><span class="result-meta-value mono">10.82 km</span></div>
-            <div class="result-meta-item"><span class="result-meta-label">Test RMSE</span><span class="result-meta-value mono">14.08 km</span></div>
-            <div class="result-meta-item"><span class="result-meta-label">R&sup2;</span><span class="result-meta-value mono">0.9813</span></div>
+            <div class="result-meta-item"><span class="result-meta-label">Model</span><span class="result-meta-value">Ridge Regression (α = 1)</span></div>
+            <div class="result-meta-item"><span class="result-meta-label">Test MAE</span><span class="result-meta-value mono">19.19 km</span></div>
+            <div class="result-meta-item"><span class="result-meta-label">Test RMSE</span><span class="result-meta-value mono">23.61 km</span></div>
+            <div class="result-meta-item"><span class="result-meta-label">R&sup2;</span><span class="result-meta-value mono">0.9375</span></div>
           </div>
-          <div class="result-meta-item"><span class="result-meta-label">Evaluation reference</span><span class="result-meta-value">96 held-out vehicles</span></div>
+          <div class="result-meta-item"><span class="result-meta-label">Evaluation reference</span><span class="result-meta-value">87 held-out vehicles</span></div>
 
           <!-- Input summary -->
           <div class="input-summary hidden" id="input-summary">

@@ -2,7 +2,7 @@
 {% set active_page = "model" %}
 
 {% block title %}Model — EV Range{% endblock %}
-{% block meta_description %}Technical details of the Gradient Boosting Regressor used for EV range prediction.{% endblock %}
+{% block meta_description %}Technical details of the Ridge Regression model used for EV range prediction.{% endblock %}
 
 {% block content %}
 <!-- Performance Hero -->
@@ -10,12 +10,12 @@
   <div class="section-inner">
     <p class="section-number">02</p>
     <h1 class="section-title">Model Performance</h1>
-    <p class="model-subtitle">Gradient Boosting Regressor</p>
-    <p class="section-subtitle">Evaluated on 96 held-out vehicles.</p>
+    <p class="model-subtitle">Ridge Regression (α = 1)</p>
+    <p class="section-subtitle">Evaluated on 87 held-out vehicles.</p>
     <div class="metrics-row">
-      <div class="metric-card metric-card--accent"><span class="metric-value mono">98.13%</span><span class="metric-label">R&sup2;</span></div>
-      <div class="metric-card"><span class="metric-value mono">10.82 <small>km</small></span><span class="metric-label">MAE</span></div>
-      <div class="metric-card"><span class="metric-value mono">14.08 <small>km</small></span><span class="metric-label">RMSE</span></div>
+      <div class="metric-card metric-card--accent"><span class="metric-value mono">93.75%</span><span class="metric-label">R&sup2;</span></div>
+      <div class="metric-card"><span class="metric-value mono">19.19 <small>km</small></span><span class="metric-label">MAE</span></div>
+      <div class="metric-card"><span class="metric-value mono">23.61 <small>km</small></span><span class="metric-label">RMSE</span></div>
     </div>
   </div>
 </section>
@@ -30,33 +30,34 @@
       <div class="two-col-main">
         <div class="plot-frame">
           <div id="chart-model-comparison-page"></div>
-          <p class="plot-caption">5-fold cross-validation RMSE for six candidate regressors. Ridge had the lowest initial CV score.</p>
+          <p class="plot-caption">5-fold cross-validation RMSE for seven candidates (six regressors + mean baseline). Ridge had the lowest CV RMSE.</p>
         </div>
       </div>
       <div class="two-col-side">
-        <p class="comparison-note">Six regression families were benchmarked using 5-fold cross-validation on the training set. Ridge had the strongest initial CV RMSE. Gradient Boosting became the final held-out test winner after hyperparameter tuning.</p>
+        <p class="comparison-note">Seven candidates (six regressors + a mean baseline) were benchmarked using 5-fold grouped cross-validation on the training set. Ridge Regression (alpha = 1) had the lowest CV RMSE and was selected as the final model.</p>
         <table class="data-table">
           <thead><tr><th>Model</th><th>CV RMSE</th></tr></thead>
           <tbody>
-            <tr class="row--highlight"><td>Ridge Regression</td><td class="mono">19.57 km</td></tr>
-            <tr><td>Gradient Boosting</td><td class="mono">22.53 km</td></tr>
-            <tr><td>Lasso Regression</td><td class="mono">24.85 km</td></tr>
-            <tr><td>XGBoost Regressor</td><td class="mono">24.88 km</td></tr>
-            <tr><td>Random Forest</td><td class="mono">24.94 km</td></tr>
-            <tr><td>Linear Regression</td><td class="mono">33.07 km</td></tr>
+            <tr class="row--highlight"><td>Ridge Regression</td><td class="mono">23.74 km</td></tr>
+            <tr><td>Linear Regression</td><td class="mono">24.92 km</td></tr>
+            <tr><td>Lasso Regression</td><td class="mono">25.31 km</td></tr>
+            <tr><td>Gradient Boosting</td><td class="mono">31.51 km</td></tr>
+            <tr><td>Random Forest</td><td class="mono">34.95 km</td></tr>
+            <tr><td>XGBoost</td><td class="mono">36.47 km</td></tr>
+            <tr><td>Mean Baseline</td><td class="mono">104.58 km</td></tr>
           </tbody>
         </table>
       </div>
     </div>
 
     <!-- Final test comparison -->
-    <h3 class="subsection-title">Final Held-Out Test Comparison</h3>
+    <h3 class="subsection-title">Final Held-Out Test Results</h3>
     <table class="data-table data-table--wide">
-      <thead><tr><th>Metric</th><th>Ridge (Tuned)</th><th class="col--accent">Gradient Boosting (Tuned)</th></tr></thead>
+      <thead><tr><th>Metric</th><th class="col--accent">Ridge (Final Model)</th><th>Mean Baseline</th></tr></thead>
       <tbody>
-        <tr><td>MAE</td><td class="mono">13.96 km</td><td class="mono col--accent">10.82 km</td></tr>
-        <tr><td>RMSE</td><td class="mono">17.61 km</td><td class="mono col--accent">14.08 km</td></tr>
-        <tr><td>R&sup2;</td><td class="mono">0.9707</td><td class="mono col--accent">0.9813</td></tr>
+        <tr><td>MAE</td><td class="mono col--accent">19.19 km</td><td class="mono">78.55 km</td></tr>
+        <tr><td>RMSE</td><td class="mono col--accent">23.61 km</td><td class="mono">95.97 km</td></tr>
+        <tr><td>R&sup2;</td><td class="mono col--accent">0.9375</td><td class="mono">&minus;0.0319</td></tr>
       </tbody>
     </table>
   </div>
@@ -74,9 +75,9 @@
       <div class="pipeline-arrow" aria-hidden="true"></div>
       <div class="pipeline-step"><span class="pipeline-step-num mono">2</span><span class="pipeline-step-title">Feature Engineering</span><span class="pipeline-step-desc">footprint_m2, volume_m3, battery_per_seat, torque_per_100kwh, segment_group</span></div>
       <div class="pipeline-arrow" aria-hidden="true"></div>
-      <div class="pipeline-step"><span class="pipeline-step-num mono">3</span><span class="pipeline-step-title">Column Transformer</span><span class="pipeline-step-desc"><strong>Numeric:</strong> median impute &rarr; scale<br><strong>Categorical:</strong> most-frequent &rarr; one-hot</span></div>
+      <div class="pipeline-step"><span class="pipeline-step-num mono">3</span><span class="pipeline-step-title">Column Transformer</span><span class="pipeline-step-desc"><strong>Numeric:</strong> median impute &rarr; StandardScaler<br><strong>Categorical:</strong> constant &ldquo;Unknown&rdquo; &rarr; one-hot</span></div>
       <div class="pipeline-arrow" aria-hidden="true"></div>
-      <div class="pipeline-step pipeline-step--accent"><span class="pipeline-step-num mono">4</span><span class="pipeline-step-title">Gradient Boosting</span><span class="pipeline-step-desc">lr=0.1 &middot; depth=3 &middot; 300 trees</span></div>
+      <div class="pipeline-step pipeline-step--accent"><span class="pipeline-step-num mono">4</span><span class="pipeline-step-title">Ridge Regression</span><span class="pipeline-step-desc">α = 1</span></div>
       <div class="pipeline-arrow" aria-hidden="true"></div>
       <div class="pipeline-step"><span class="pipeline-step-num mono">5</span><span class="pipeline-step-title">Predicted Range</span><span class="pipeline-step-desc">Estimated km</span></div>
     </div>
@@ -108,7 +109,7 @@
         <h2 class="section-title">Reproducibility</h2>
         <div class="repro-grid">
           <div class="repro-item"><span class="repro-label">Dataset</span><span class="repro-value mono">478 EV models</span></div>
-          <div class="repro-item"><span class="repro-label">Train / Test</span><span class="repro-value mono">382 / 96</span></div>
+          <div class="repro-item"><span class="repro-label">Train / Test</span><span class="repro-value mono">391 / 87</span></div>
           <div class="repro-item"><span class="repro-label">Split</span><span class="repro-value mono">80 / 20</span></div>
           <div class="repro-item"><span class="repro-label">Random Seed</span><span class="repro-value mono">42</span></div>
           <div class="repro-item"><span class="repro-label">Model Artifact</span><span class="repro-value mono">ev_range_pipeline.joblib</span></div>
@@ -120,7 +121,7 @@
         <div class="limitation-list">
           <div class="limitation-item"><strong>Rated vs real-world range</strong> &mdash; The target represents official rated range. Real conditions (temperature, HVAC, terrain, driving) cause variation.</div>
           <div class="limitation-item"><strong>Missing cell metadata</strong> &mdash; <span class="mono">number_of_cells</span> is missing in 42.3% of vehicles; handled via imputation + missingness flag.</div>
-          <div class="limitation-item"><strong>Cargo normalization</strong> &mdash; Three cargo entries recorded as banana boxes were converted using <span class="mono">1 box = 52 L</span>.</div>
+          <div class="limitation-item"><strong>Cargo normalization</strong> &mdash; Three cargo entries recorded in banana boxes were treated as missing (NaN) rather than converted, to avoid fabricating data.</div>
         </div>
       </div>
     </div>

@@ -1,7 +1,7 @@
 """
 EV Range Prediction -- Flask Application
 Serves the multi-page frontend and exposes POST /api/predict using the
-serialized Gradient Boosting pipeline (model/ev_range_pipeline.joblib).
+serialized Ridge Regression pipeline (model/ev_range_pipeline.joblib).
 """
 
 import os
@@ -27,7 +27,16 @@ model_load_error = None
 
 try:
     if os.path.exists(MODEL_PATH):
-        pipeline = joblib.load(MODEL_PATH)
+        _raw_pipeline = joblib.load(MODEL_PATH)
+        # The saved pipeline has 3 steps: features (FunctionTransformer) -> preprocessor -> model.
+        # The features step is a cloudpickled Jupyter function that crashes outside the
+        # original notebook kernel. Since engineer_features() in this file replicates that
+        # logic, we skip it and build a reduced pipeline: preprocessor -> model.
+        from sklearn.pipeline import Pipeline as SkPipeline
+        pipeline = SkPipeline([
+            ('preprocessor', _raw_pipeline.named_steps['preprocessor']),
+            ('model', _raw_pipeline.named_steps['model']),
+        ])
     else:
         model_load_error = f"File not found: {MODEL_PATH} (cwd: {os.getcwd()}, dir: {os.path.dirname(__file__)})"
 except Exception as e:
@@ -76,16 +85,17 @@ def engineer_features(raw: dict) -> pd.DataFrame:
         "length_mm": raw["length_mm"],
         "width_mm": raw["width_mm"],
         "height_mm": raw["height_mm"],
-        "cargo_volume_l": str(raw["cargo_volume_l"]),
+        "cargo_volume_l": raw["cargo_volume_l"],
         "drivetrain": raw["drivetrain"],
         "segment": seg,
         "car_body_type": raw["car_body_type"],
         "cells_missing_flag": raw.get("cells_missing_flag", 0),
+        "cargo_missing_flag": raw.get("cargo_missing_flag", 0),
+        "cargo_unknown_unit_flag": raw.get("cargo_unknown_unit_flag", 0),
         "footprint_m2": footprint,
         "volume_m3": volume,
         "battery_per_seat": battery_per_seat,
         "torque_per_100kwh": torque_per_100kwh,
-        "segment_group": segment_group,
     }
 
     # Handle NaN for number_of_cells when flagged as missing
@@ -243,7 +253,7 @@ def predict():
 
         return jsonify({
             "predicted_range_km": round(float(prediction), 2),
-            "model": "Gradient Boosting Regressor",
+            "model": "Ridge Regression (alpha=1)",
             "received_input": received,
         })
     except Exception:

@@ -11,7 +11,15 @@ import pandas as pd
 import joblib
 
 MODEL_PATH = os.path.join(os.path.dirname(__file__), "..", "model", "ev_range_pipeline.joblib")
-pipeline = joblib.load(MODEL_PATH)
+_raw_pipeline = joblib.load(MODEL_PATH)
+
+# Skip the internal 'features' FunctionTransformer (cloudpickled Jupyter func)
+# since engineer_features() below replicates that logic.
+from sklearn.pipeline import Pipeline as SkPipeline
+pipeline = SkPipeline([
+    ('preprocessor', _raw_pipeline.named_steps['preprocessor']),
+    ('model', _raw_pipeline.named_steps['model']),
+])
 
 SEGMENT_GROUP_RE = re.compile(r"([A-Za-z]+)\s*-")
 
@@ -42,16 +50,17 @@ def engineer_features(raw):
         "length_mm": raw["length_mm"],
         "width_mm": raw["width_mm"],
         "height_mm": raw["height_mm"],
-        "cargo_volume_l": str(raw["cargo_volume_l"]),
+        "cargo_volume_l": raw["cargo_volume_l"],
         "drivetrain": raw["drivetrain"],
         "segment": seg,
         "car_body_type": raw["car_body_type"],
         "cells_missing_flag": raw.get("cells_missing_flag", 0),
+        "cargo_missing_flag": raw.get("cargo_missing_flag", 0),
+        "cargo_unknown_unit_flag": raw.get("cargo_unknown_unit_flag", 0),
         "footprint_m2": footprint,
         "volume_m3": volume,
         "battery_per_seat": battery_per_seat,
         "torque_per_100kwh": torque_per_100kwh,
-        "segment_group": segment_group,
     }
     if raw.get("cells_missing_flag", 0) == 1:
         row["number_of_cells"] = np.nan
@@ -137,10 +146,9 @@ for tc in test_cases:
     fp = df["footprint_m2"].iloc[0]
     vol = df["volume_m3"].iloc[0]
     tpk = df["torque_per_100kwh"].iloc[0]
-    sg = df["segment_group"].iloc[0]
     print(f"\n{tc['name']}")
     print(f"  battery={tc['input']['battery_capacity_kWh']} kWh  seats={tc['input']['seats']}  body={tc['input']['car_body_type']}")
-    print(f"  Derived -> bps={bps:.2f}  footprint={fp:.2f}  vol={vol:.2f}  tpk={tpk:.2f}  seg_grp={sg}")
+    print(f"  Derived -> bps={bps:.2f}  footprint={fp:.2f}  vol={vol:.2f}  tpk={tpk:.2f}")
     print(f"  >>> PREDICTED RANGE: {pred:.2f} km")
 
 print("\n" + "=" * 70)

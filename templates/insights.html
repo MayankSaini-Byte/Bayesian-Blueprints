@@ -13,7 +13,7 @@
     <p class="section-subtitle">How the candidate regressors performed during model selection.</p>
     <div class="plot-frame plot-frame--large">
       <div id="chart-model-comparison"></div>
-      <p class="plot-caption">5-fold cross-validation RMSE (km). Lower is better. Ridge led the initial CV benchmark; the tuned Gradient Boosting model produced the best final held-out test performance.</p>
+      <p class="plot-caption">5-fold grouped cross-validation RMSE (km). Lower is better. Ridge Regression had the lowest CV RMSE and was selected as the final model.</p>
       <p class="plot-source">From project training artifacts</p>
     </div>
   </div>
@@ -35,7 +35,7 @@
       </div>
       <div class="two-col-side two-col-side--text">
         <h3 class="subsection-title">Interpretation</h3>
-        <p>The closer points stay to the diagonal reference line, the more closely the model follows the held-out observations. The tuned Gradient Boosting model achieves an R&sup2; of 0.9813 on these 96 unseen vehicles, with an average error of 10.82 km.</p>
+        <p>The closer points stay to the diagonal reference line, the more closely the model follows the held-out observations. The final Ridge Regression model achieves an R&sup2; of 0.9375 on these 87 unseen vehicles, with an average error of 19.19 km.</p>
         <p>Scatter is relatively uniform across the 135&ndash;685 km range, suggesting the model generalizes well to both compact and large-battery EVs.</p>
       </div>
     </div>
@@ -47,26 +47,26 @@
   <div class="section-inner">
     <p class="section-number">03</p>
     <h2 class="section-title">What Drives Range?</h2>
-    <p class="section-subtitle">Which engineered and raw features contribute most strongly to the Gradient Boosting model.</p>
+    <p class="section-subtitle">Permutation importance on the final Ridge model — average increase in training RMSE (km) when each feature is shuffled.</p>
 
     <div class="two-col">
       <div class="two-col-main">
         <div class="plot-frame">
           <div id="chart-feature-importance"></div>
-          <p class="plot-caption">Model feature importance (Gradient Boosting). Battery-per-seat and battery capacity together account for roughly 84% of total importance.</p>
+          <p class="plot-caption">Permutation importance (Ridge Regression). battery_capacity_kWh dominates, followed by height_mm.</p>
         </div>  <p class="plot-source">From project training artifacts</p>
         </div>
       </div>
       <div class="two-col-side two-col-side--text">
         <h3 class="subsection-title">Key Features</h3>
         <div class="imp-list">
-          <div class="imp-list-item"><span class="imp-list-name mono">battery_per_seat</span><span class="imp-list-pct mono">49.99%</span></div>
-          <div class="imp-list-item"><span class="imp-list-name mono">battery_capacity_kWh</span><span class="imp-list-pct mono">34.03%</span></div>
-          <div class="imp-list-item"><span class="imp-list-name mono">height_mm</span><span class="imp-list-pct mono">5.12%</span></div>
-          <div class="imp-list-item"><span class="imp-list-name mono">fast_charging_power</span><span class="imp-list-pct mono">3.48%</span></div>
-          <div class="imp-list-item"><span class="imp-list-name mono">torque_per_100kwh</span><span class="imp-list-pct mono">1.28%</span></div>
-          <div class="imp-list-item"><span class="imp-list-name mono">car_body_type_SUV</span><span class="imp-list-pct mono">0.96%</span></div>
-          <div class="imp-list-item"><span class="imp-list-name mono">car_body_type_Sedan</span><span class="imp-list-pct mono">0.78%</span></div>
+          <div class="imp-list-item"><span class="imp-list-name mono">battery_capacity_kWh</span><span class="imp-list-pct mono">111.76 km</span></div>
+          <div class="imp-list-item"><span class="imp-list-name mono">height_mm</span><span class="imp-list-pct mono">43.34 km</span></div>
+          <div class="imp-list-item"><span class="imp-list-name mono">car_body_type</span><span class="imp-list-pct mono">8.97 km</span></div>
+          <div class="imp-list-item"><span class="imp-list-name mono">top_speed_kmh</span><span class="imp-list-pct mono">8.68 km</span></div>
+          <div class="imp-list-item"><span class="imp-list-name mono">segment</span><span class="imp-list-pct mono">8.64 km</span></div>
+          <div class="imp-list-item"><span class="imp-list-name mono">number_of_cells</span><span class="imp-list-pct mono">5.15 km</span></div>
+          <div class="imp-list-item"><span class="imp-list-name mono">cargo_volume_l</span><span class="imp-list-pct mono">4.83 km</span></div>
         </div>
       </div>
     </div>
@@ -92,7 +92,7 @@
         <p>Torque and fast-charging characteristics contribute additional signal to the model's predictions, likely capturing drivetrain efficiency and battery thermal management capacity.</p>
       </div>
     </div>
-    <p class="interpretation-caveat">Feature importance indicates model importance, not physical causation. These features contribute to prediction accuracy within this trained model.</p>
+    <p class="interpretation-caveat">Feature importance indicates model reliance during training, not physical causation. Correlated features can share importance; permutation importance does not establish causality or held-out predictive contribution on its own.</p>
   </div>
 </section>
 

@@ -11,25 +11,26 @@
   // Data sets from project evaluation and notebook artifacts
   // --------------------------------------------------------------------------
   const CV_MODELS = [
-    { name: "Ridge Regression", rmse: 19.57, highlight: false },
-    { name: "Gradient Boosting Regressor", rmse: 22.53, highlight: true, note: "Final Held-Out Test Winner (MAE 10.82 km)" },
-    { name: "Lasso Regression", rmse: 24.85, highlight: false },
-    { name: "XGBoost Regressor", rmse: 24.88, highlight: false },
-    { name: "Random Forest Regressor", rmse: 24.94, highlight: false },
-    { name: "Linear Regression", rmse: 33.07, highlight: false }
+    { name: "Ridge Regression", rmse: 23.74, highlight: true, note: "Final Model (α = 1)" },
+    { name: "Linear Regression", rmse: 24.92, highlight: false },
+    { name: "Lasso Regression", rmse: 25.31, highlight: false },
+    { name: "Gradient Boosting", rmse: 31.51, highlight: false },
+    { name: "Random Forest", rmse: 34.95, highlight: false },
+    { name: "XGBoost", rmse: 36.47, highlight: false },
+    { name: "Mean Baseline", rmse: 104.58, highlight: false }
   ];
 
   const FEATURE_IMPORTANCES = [
-    { name: "battery_per_seat", pct: 49.99, desc: "Battery capacity allocated per passenger seat" },
-    { name: "battery_capacity_kWh", pct: 34.03, desc: "Total battery pack energy capacity" },
-    { name: "height_mm", pct: 5.12, desc: "Vehicle height (aerodynamic & volume proxy)" },
-    { name: "fast_charging_power_kw_dc", pct: 3.48, desc: "DC fast charging rate capability" },
-    { name: "torque_per_100kwh", pct: 1.28, desc: "Torque output per 100 kWh battery ratio" },
-    { name: "car_body_type_SUV", pct: 0.96, desc: "SUV body type indicator" },
-    { name: "car_body_type_Sedan", pct: 0.78, desc: "Sedan body type indicator" }
+    { name: "battery_capacity_kWh", pct: 111.76, desc: "Total battery pack energy capacity" },
+    { name: "height_mm", pct: 43.34, desc: "Vehicle height (aerodynamic & volume proxy)" },
+    { name: "car_body_type", pct: 8.97, desc: "Vehicle body type category" },
+    { name: "top_speed_kmh", pct: 8.68, desc: "Maximum vehicle speed" },
+    { name: "segment", pct: 8.64, desc: "Market segment classification" },
+    { name: "number_of_cells", pct: 5.15, desc: "Battery cell count" },
+    { name: "cargo_volume_l", pct: 4.83, desc: "Cargo volume in litres" }
   ];
 
-  // Simulated representative test points (Actual km, Predicted km) reflecting R^2=0.9813, MAE=10.82 km
+  // Simulated representative test points (Actual km, Predicted km) reflecting R^2=0.9375, MAE=19.19 km
   const TEST_POINTS = [
     { a: 135, p: 140, car: "Compact EV A" }, { a: 160, p: 158, car: "City Hatch" },
     { a: 185, p: 182, car: "Compact EV B" }, { a: 210, p: 218, car: "Urban Crossover" },
@@ -55,7 +56,7 @@
     const wrapper = document.createElement("div");
     wrapper.className = "chart-wrapper chart-bar-group";
 
-    const maxRmse = 36;
+    const maxRmse = 110;
 
     CV_MODELS.forEach((m, idx) => {
       const row = document.createElement("div");
@@ -123,7 +124,7 @@
 
       const value = document.createElement("div");
       value.className = "chart-bar-val mono";
-      value.textContent = f.pct.toFixed(2) + "%";
+      value.textContent = f.pct.toFixed(2) + " km";
 
       track.appendChild(fill);
       row.appendChild(label);

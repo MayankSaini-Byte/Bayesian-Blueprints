@@ -11,15 +11,7 @@ import pandas as pd
 import joblib
 
 MODEL_PATH = os.path.join(os.path.dirname(__file__), "..", "model", "ev_range_pipeline.joblib")
-_raw_pipeline = joblib.load(MODEL_PATH)
-
-# Skip the internal 'features' FunctionTransformer (cloudpickled Jupyter func)
-# since engineer_features() below replicates that logic.
-from sklearn.pipeline import Pipeline as SkPipeline
-pipeline = SkPipeline([
-    ('preprocessor', _raw_pipeline.named_steps['preprocessor']),
-    ('model', _raw_pipeline.named_steps['model']),
-])
+pipeline = joblib.load(MODEL_PATH)
 
 SEGMENT_GROUP_RE = re.compile(r"([A-Za-z]+)\s*-")
 

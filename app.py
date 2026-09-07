@@ -27,16 +27,7 @@ model_load_error = None
 
 try:
     if os.path.exists(MODEL_PATH):
-        _raw_pipeline = joblib.load(MODEL_PATH)
-        # The saved pipeline has 3 steps: features (FunctionTransformer) -> preprocessor -> model.
-        # The features step is a cloudpickled Jupyter function that crashes outside the
-        # original notebook kernel. Since engineer_features() in this file replicates that
-        # logic, we skip it and build a reduced pipeline: preprocessor -> model.
-        from sklearn.pipeline import Pipeline as SkPipeline
-        pipeline = SkPipeline([
-            ('preprocessor', _raw_pipeline.named_steps['preprocessor']),
-            ('model', _raw_pipeline.named_steps['model']),
-        ])
+        pipeline = joblib.load(MODEL_PATH)
     else:
         model_load_error = f"File not found: {MODEL_PATH} (cwd: {os.getcwd()}, dir: {os.path.dirname(__file__)})"
 except Exception as e:
